@@ -3,7 +3,8 @@
 
 int main(int argc, char const *argv[])
 {
-	Memory::Allocator alloc(2);
+	Memory::Allocator alloc;
 	
 	Test* test = alloc.request<Test>();
+	alloc.del<Test>(test);
 }

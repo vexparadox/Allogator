@@ -16,15 +16,3 @@ Memory::Allocator::Allocator(uint64_t initial_size)
 		std::cout << "Allocator's request for memory failed." << std::endl;
 	}
 }
-
-void Memory::Allocator::del(void* ptr)
-{
-	if(ptr < page || ptr > page+curr_size)
-	{
-		#if DEBUG
-		std::cout << "Trying to delete non-allocated memory." << std::endl;
-		#endif
-		return;
-	}
-
-}

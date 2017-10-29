@@ -20,7 +20,38 @@ namespace Memory{
 		Allocator(uint64_t initial_size = 2048);
 
 		//delete a block of memory at ptr
-		void del(void* ptr);
+		template<typename T>
+		void del(void* ptr)
+		{
+			//we need to cast so we can check if we're in the page size and so we can do arithmatic
+			uint64_t* casted = (uint64_t*)ptr;
+
+			#if DEBUG
+			if(casted < page || casted > page+curr_size)
+			{
+				#if DEBUG
+				std::cout << "Trying to delete non-allocated memory." << std::endl;
+				#endif
+				return;
+			}
+			#endif
+
+			T* typed_ptr = (T*)ptr;
+			typed_ptr->~T();
+			//get the size and ptr of where we're deleting
+			uint64_t* deleted_ptr = --casted;
+			uint64_t deleted_size = *deleted_ptr;
+
+			std::memset(deleted_ptr, 0, deleted_size); // write over memory with 0s
+			//put into the blanks
+			for(int i = 0; i < 64; i++){
+				if(blanks[i].address == nullptr)
+				{
+					blanks[i].address = deleted_ptr;
+					blanks[i].size = deleted_size;
+				}
+			}
+		}
 
 		//request a block of memory sizeof T
 		template<typename T>
