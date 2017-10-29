@@ -1,28 +1,19 @@
 #include "Allocator.hpp"
 
-Memory::Allocator::Allocator()
+Memory::Allocator::Allocator(uint64_t initial_size)
 {
-	page = new uint64_t[2048];
+	page = new uint64_t[initial_size];
 	blanks = new Blank[64];
-	std::memset(page, 0, 2048);
-	std::memset(blanks, 0, 64);
-	curr_size = 2048;
-	curr_pos = page;
-}
-
-template<typename T>
-void* Memory::Allocator::request()
-{
-	size_t size = sizeof(T); 
-	if(uint64_t(curr_pos-curr_size) >= uint64_t(size+header_size))
+	if(page && blanks)
 	{
-		*curr_pos = size;
-		return ++curr_pos;
+		std::memset(page, 0, initial_size);
+		std::memset(blanks, 0, 64);
+		curr_size = initial_size;
+		curr_pos = page;
 	}
 	else
 	{
-		//allocation failed
-		return nullptr;
+		std::cout << "Allocator's request for memory failed." << std::endl;
 	}
 }
 
