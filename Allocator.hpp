@@ -17,7 +17,24 @@ namespace Memory{
 		int header_size = 64; // basically 64 bit to hold the size of the header data
 	public:
 		//construct the allocator
-		Allocator(uint64_t initial_size = 2048);
+		Allocator(uint64_t initial_size = 2048)
+		{
+			page = new uint64_t[initial_size];
+			blanks = new Blank[64];
+			if(page && blanks)
+			{
+				std::memset(page, 0, initial_size);
+				std::memset(blanks, 0, 64);
+				curr_size = initial_size;
+				curr_pos = page;
+			}
+			#if DEBUG
+			else
+			{
+				std::cout << "Allocator's request for memory failed." << std::endl;
+			}
+			#endif
+		}
 
 		//delete a block of memory at ptr
 		template<typename T>
