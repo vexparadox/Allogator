@@ -14,7 +14,7 @@ namespace Memory{
 		Blank* blanks = nullptr; // an array of blanks
 
 		int curr_size;
-		int header_size = 64; // basically 64 bit to hold the size of the header data
+		int header_size = 1; // how many 64 bits to hold the size of the header data
 	public:
 		//construct the allocator
 		Allocator(uint64_t initial_size = 2048)
@@ -89,10 +89,25 @@ namespace Memory{
 				//allocation failed
 				std::cout << "Not enough space for this object" << std::endl;
 				std::cout << "Remaining: " << remaining_space << std::endl;
-				std::cout << "Requested: " << size << std::endl;
+				std::cout << "Requested: " << size+header_size << std::endl;
 				#endif
 				return nullptr;
 			}
 		}
+
+		void print_page()
+		{
+			#if DEBUG
+			for(int i = 0; i < curr_size; i++)
+			{
+				std::cout << std::hex << page[i] << std::endl;
+				if(i%20 == 0 && i!=0)
+				{
+					std::cout << std::endl;
+				}
+			}
+			#endif
+		}
+		
 	};
 }
