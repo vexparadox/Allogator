@@ -26,7 +26,6 @@ namespace Memory{
 			//we need to cast so we can check if we're in the page size and so we can do arithmatic
 			uint64_t* casted = (uint64_t*)ptr;
 
-			#if DEBUG
 			if(casted < page || casted > page+curr_size)
 			{
 				#if DEBUG
@@ -34,7 +33,6 @@ namespace Memory{
 				#endif
 				return;
 			}
-			#endif
 
 			T* typed_ptr = (T*)ptr;
 			typed_ptr->~T();

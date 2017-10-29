@@ -11,8 +11,10 @@ Memory::Allocator::Allocator(uint64_t initial_size)
 		curr_size = initial_size;
 		curr_pos = page;
 	}
+	#if DEBUG
 	else
 	{
 		std::cout << "Allocator's request for memory failed." << std::endl;
 	}
+	#endif
 }
