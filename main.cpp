@@ -5,5 +5,5 @@ int main(int argc, char const *argv[])
 {
 	Memory::Allocator alloc(2);
 	
-	Test* test = new(alloc.request<Test>())Test;
+	Test* test = alloc.request<Test>();
 }

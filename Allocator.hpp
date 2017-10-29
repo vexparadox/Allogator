@@ -24,25 +24,27 @@ namespace Memory{
 
 		//request a block of memory sizeof T
 		template<typename T>
-		void* request()
+		T* request()
 		{
 			size_t size = sizeof(T); 
 			// do we have a enough space?
-			// current position - the page start - the current page size
+			// the page start+current page size - current_position gives us the remaining
 			int64_t remaining_space = int64_t((page+curr_size)-curr_pos);
 			if(remaining_space >= int64_t(size+header_size))
 			{
 				*curr_pos = size;
 				void* address = ++curr_pos;
 				curr_pos += size;
-				return address;
+				return new(address)T;
 			}
 			else
 			{
+				#if DEBUG
 				//allocation failed
 				std::cout << "Not enough space for this object" << std::endl;
 				std::cout << "Remaining: " << remaining_space << std::endl;
 				std::cout << "Requested: " << size << std::endl;
+				#endif
 				return nullptr;
 			}
 		}
