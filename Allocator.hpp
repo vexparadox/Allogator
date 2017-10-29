@@ -4,7 +4,7 @@
 #include <iostream>
 namespace Memory{
 	struct Blank{
-		uint64_t address = 0;;
+		void* address = nullptr;
 		uint64_t size = 0;
 	};
 	class Allocator{
@@ -14,7 +14,7 @@ namespace Memory{
 		Blank* blanks = nullptr; // an array of blanks
 
 		int curr_size;
-		int header_size = 64;
+		int header_size = 64; // basically 64 bit to hold the size of the header data
 	public:
 		//construct the allocator
 		Allocator(uint64_t initial_size = 2048);
@@ -27,7 +27,10 @@ namespace Memory{
 		void* request()
 		{
 			size_t size = sizeof(T); 
-			if(uint64_t(curr_pos-curr_size) >= uint64_t(size+header_size))
+			// do we have a enough space?
+			// current position - the page start - the current page size
+			int64_t remaining_space = int64_t((page+curr_size)-curr_pos);
+			if(remaining_space >= int64_t(size+header_size))
 			{
 				*curr_pos = size;
 				void* address = ++curr_pos;
@@ -38,7 +41,7 @@ namespace Memory{
 			{
 				//allocation failed
 				std::cout << "Not enough space for this object" << std::endl;
-				std::cout << "Remaining: " << uint64_t(curr_pos-curr_size) << std::endl;
+				std::cout << "Remaining: " << remaining_space << std::endl;
 				std::cout << "Requested: " << size << std::endl;
 				return nullptr;
 			}
