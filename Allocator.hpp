@@ -14,7 +14,7 @@ namespace Memory{
 		Blank* blanks = nullptr; // an array of blanks
 
 		int curr_size;
-		int header_size = 1; // how many 64 bits to hold the size of the header data
+		int header_size = 8; // how many bytes to hold the size of the header data
 	public:
 		//construct the allocator
 		Allocator(uint64_t initial_size = 2048)
@@ -54,9 +54,11 @@ namespace Memory{
 			T* typed_ptr = (T*)ptr;
 			typed_ptr->~T();
 			//get the size and ptr of where we're deleting
-			uint64_t* deleted_ptr = --casted;
-			uint64_t deleted_size = *deleted_ptr;
-
+			uint64_t* deleted_ptr = (uint64_t*)(casted-header_size);
+			uint64_t deleted_size = *deleted_ptr+header_size;
+			#if DEBUG
+			std::cout << "Deleteing " << deleted_size << " at : " << deleted_ptr << std::endl;
+			#endif
 			std::memset(deleted_ptr, 0, deleted_size); // write over memory with 0s
 			//put into the blanks
 			for(int i = 0; i < 64; i++){
@@ -79,8 +81,12 @@ namespace Memory{
 			if(remaining_space >= int64_t(size+header_size))
 			{
 				*curr_pos = size;
-				void* address = ++curr_pos;
-				curr_pos += size;
+				void* address = (uint64_t*)(curr_pos+header_size); //return after the header
+				curr_pos += size; // place the curr_pos at the end of this allocated block
+				#if DEBUG
+				std::cout << "Requested: " << int64_t(size+header_size) << std::endl;
+				std::cout << "Given: " << address << std::endl;
+				#endif
 				return new(address)T;
 			}
 			else
