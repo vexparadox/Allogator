@@ -7,4 +7,5 @@ int main(int argc, char const *argv[])
 	
 	Test* test = alloc.request<Test>();
 	alloc.del<Test>(test);
+	
 }

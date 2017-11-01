@@ -66,6 +66,7 @@ namespace Memory{
 				{
 					blanks[i].address = deleted_ptr;
 					blanks[i].size = deleted_size;
+					break;
 				}
 			}
 		}
