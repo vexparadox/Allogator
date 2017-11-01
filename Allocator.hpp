@@ -28,7 +28,7 @@ namespace Memory{
 				curr_size = initial_size;
 				curr_pos = page;
 			}
-			#if DEBUG
+			#if ALLOC_DEBUG
 			else
 			{
 				std::cout << "Allocator's request for memory failed." << std::endl;
@@ -45,7 +45,7 @@ namespace Memory{
 
 			if(casted < page || casted > page+curr_size)
 			{
-				#if DEBUG
+				#if ALLOC_DEBUG
 				std::cout << "Trying to delete non-allocated memory." << std::endl;
 				#endif
 				return;
@@ -56,7 +56,7 @@ namespace Memory{
 			//get the size and ptr of where we're deleting
 			uint64_t* deleted_ptr = (uint64_t*)(casted-header_size);
 			uint64_t deleted_size = *deleted_ptr+header_size;
-			#if DEBUG
+			#if ALLOC_DEBUG
 			std::cout << "Deleteing " << deleted_size << " at : " << deleted_ptr << std::endl;
 			#endif
 			std::memset(deleted_ptr, 0, deleted_size); // write over memory with 0s
@@ -83,7 +83,7 @@ namespace Memory{
 				*curr_pos = size;
 				void* address = (uint64_t*)(curr_pos+header_size); //return after the header
 				curr_pos += size; // place the curr_pos at the end of this allocated block
-				#if DEBUG
+				#if ALLOC_DEBUG
 				std::cout << "Requested: " << int64_t(size+header_size) << std::endl;
 				std::cout << "Given: " << address << std::endl;
 				#endif
@@ -91,7 +91,7 @@ namespace Memory{
 			}
 			else
 			{
-				#if DEBUG
+				#if ALLOC_DEBUG
 				//allocation failed
 				std::cout << "Not enough space for this object" << std::endl;
 				std::cout << "Remaining: " << remaining_space << std::endl;
@@ -103,7 +103,7 @@ namespace Memory{
 
 		void print_page()
 		{
-			#if DEBUG
+			#if ALLOC_DEBUG
 			for(int i = 0; i < curr_size; i++)
 			{
 				std::cout << std::hex << page[i] << std::endl;
