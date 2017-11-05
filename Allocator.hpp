@@ -74,11 +74,11 @@ namespace Memory{
 		template<typename T>
 		T* request()
 		{
-			size_t size = sizeof(T); 
+			size_t type_size = sizeof(T); 
 			// do we have a enough space?
 			// the page start+current page size - current_position gives us the remaining space on the end
 			int64_t end_remaining_space = int64_t((page+curr_size)-curr_pos);
-			int64_t requested = int64_t(size+header_size);
+			int64_t requested = int64_t(type_size+header_size);
 			auto found_blank = blanks.empty() ? blanks.end() : std::find_if(blanks.begin(), blanks.end(), [requested](const Blank& blank){ return blank.size == requested; });
 			if(found_blank != blanks.end())
 			{
@@ -87,7 +87,7 @@ namespace Memory{
 				// remove the blank
 				blanks.erase(found_blank);
 				
-				*address = (*found_blank).size; // write the size
+				*address = type_size; // write the size
 				address += header_size; //move past the header size
 				
 				#if ALLOC_DEBUG
@@ -99,9 +99,9 @@ namespace Memory{
 			else if(end_remaining_space >= requested)
 			{
 				//we do a new allocation at the end
-				*curr_pos = size;
+				*curr_pos = type_size;
 				void* address = (uint64_t*)(curr_pos+header_size); //return after the header
-				curr_pos += size; // place the curr_pos at the end of this allocated block
+				curr_pos += type_size; // place the curr_pos at the end of this allocated block
 				#if ALLOC_DEBUG
 				std::cout << "Requested: " << requested << std::endl;
 				std::cout << "Given: " << address << std::endl;
